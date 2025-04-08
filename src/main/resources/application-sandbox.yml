@@ -23,7 +23,6 @@ logging:
 fabrick:
   api:
     baseUrl: https://sandbox.platfr.io
-    authSchema: S2S
 springdoc:
   api-docs:
     path: /v3/api-docs
