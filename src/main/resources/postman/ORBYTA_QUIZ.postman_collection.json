@@ -1,0 +1,369 @@
+{
+	"info": {
+		"_postman_id": "4fcb273c-cf80-457d-b84f-4b870551a77c",
+		"name": "ORBYTA QUIZ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42611472"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "getBalanceById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/14537780/balance",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"14537780",
+								"balance"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "NO AUTH KEY",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/accounts/14537780/balance",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										"14537780",
+										"balance"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "getTransactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Time-Zone",
+								"value": "Europe/Rome",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Auth-Schema",
+								"value": "S2S",
+								"type": "text"
+							},
+							{
+								"key": "Api-Key",
+								"value": "FXOVVXXHVCPVPBZXIJOBGUGSKHDNFRRQJP",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{base_path_account}}/14537780/transactions?fromAccountingDate=2019-04-01&toAccountingDate=2019-06-01",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{base_path_account}}",
+								"14537780",
+								"transactions"
+							],
+							"query": [
+								{
+									"key": "fromAccountingDate",
+									"value": "2019-04-01"
+								},
+								{
+									"key": "toAccountingDate",
+									"value": "2019-06-01"
+								},
+								{
+									"key": "Api-Key",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "400 - NO AUTH KEY",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Time-Zone",
+										"value": "Europe/Rome",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Auth-Schema",
+										"value": "S2S",
+										"type": "text"
+									},
+									{
+										"key": "Api-Key",
+										"value": "FXOVVXXHVCPVPBZXIJOBGUGSKHDNFRRQJP",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/v1/accounts/14537780/transactions?fromAccountingDate=2019-04-01&toAccountingDate=2019-06-01",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										"14537780",
+										"transactions"
+									],
+									"query": [
+										{
+											"key": "fromAccountingDate",
+											"value": "2019-04-01"
+										},
+										{
+											"key": "toAccountingDate",
+											"value": "2019-06-01"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "400 - INVALID DATE",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Time-Zone",
+										"value": "Europe/Rome",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Auth-Schema",
+										"value": "S2S",
+										"type": "text"
+									},
+									{
+										"key": "Api-Key",
+										"value": "FXOVVXXHVCPVPBZXIJOBGUGSKHDNFRRQJP",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{base_path_account}}/14537780/transactions?fromAccountingDate=2020-04-01&toAccountingDate=2019-06-01",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{base_path_account}}",
+										"14537780",
+										"transactions"
+									],
+									"query": [
+										{
+											"key": "fromAccountingDate",
+											"value": "2020-04-01"
+										},
+										{
+											"key": "toAccountingDate",
+											"value": "2019-06-01"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "postMoneyTransfer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Time-Zone",
+								"value": "Europe/Rome",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Auth-Schema",
+								"value": "S2S",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Api-Key",
+								"value": "FXOVVXXHVCPVPBZXIJOBGUGSKHDNFRRQJP",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"creditor\": {\n        \"name\": \"John Doe\",\n        \"account\": {\n            \"accountCode\": \"IT23A0336844430152923804660\",\n            \"bicCode\": \"SELBIT2BXXX\"\n        }\n    },\n    \"executionDate\": \"2025-04-09\",\n    \"uri\": \"REMITTANCE_INFORMATION\",\n    \"description\": \"Payment invoice 75/2017\",\n    \"amount\": 800,\n    \"currency\": \"EUR\",\n    \"isUrgent\": false,\n    \"isInstant\": false,\n    \"feeType\": \"SHA\",\n    \"feeAccountId\": \"14537780\",\n    \"taxRelief\": {\n        \"taxReliefId\": \"L449\",\n        \"isCondoUpgrade\": false,\n        \"creditorFiscalCode\": \"56258745832\",\n        \"beneficiaryType\": \"NATURAL_PERSON\",\n        \"naturalPersonBeneficiary\": {\n            \"fiscalCode1\": \"MRLFNC81L04A859L\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/accounts/14537780/payments/money-transfers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"14537780",
+								"payments",
+								"money-transfers"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "NO AUTH KEY",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-Time-Zone",
+										"value": "Europe/Rome",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Auth-Schema",
+										"value": "S2S",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "Api-Key",
+										"value": "FXOVVXXHVCPVPBZXIJOBGUGSKHDNFRRQJP",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"creditor\": {\n        \"name\": \"John Doe\",\n        \"account\": {\n            \"accountCode\": \"IT23A0336844430152923804660\",\n            \"bicCode\": \"SELBIT2BXXX\"\n        }\n    },\n    \"executionDate\": \"2025-04-09\",\n    \"uri\": \"REMITTANCE_INFORMATION\",\n    \"description\": \"Payment invoice 75/2017\",\n    \"amount\": 800,\n    \"currency\": \"EUR\",\n    \"isUrgent\": false,\n    \"isInstant\": false,\n    \"feeType\": \"SHA\",\n    \"feeAccountId\": \"14537780\",\n    \"taxRelief\": {\n        \"taxReliefId\": \"L449\",\n        \"isCondoUpgrade\": false,\n        \"creditorFiscalCode\": \"56258745832\",\n        \"beneficiaryType\": \"NATURAL_PERSON\",\n        \"naturalPersonBeneficiary\": {\n            \"fiscalCode1\": \"MRLFNC81L04A859L\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/accounts/14537780/payments/money-transfers",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"accounts",
+										"14537780",
+										"payments",
+										"money-transfers"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "base_path_account",
+			"value": "api/v1/accounts",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}
