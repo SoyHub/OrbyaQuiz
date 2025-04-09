@@ -322,12 +322,12 @@ Le categorie principali di test includono:
 
 ## Gestione degli Errori
 
-L'applicazione implementa una gestione centralizzata degli errori utilizzando `@ControllerAdvice` e gestori di eccezioni personalizzati:
+L'applicazione implementa una gestione centralizzata degli errori utilizzando `@RestControllerAdvice` e gestori di eccezioni personalizzati:
 
 ```mermaid
 graph LR
-    C[FabrickApiException] -->|handled by| B
-    E[ValidationException] -->|handled by| B
+    C[FabrickApiException] -->|handled by| B[GlobalExceptionHandler]
+    E[ValidationException] -->|handled by| B[GlobalExceptionHandler]
     B -->|returns| F[ErrorResponse]
 ```
 
