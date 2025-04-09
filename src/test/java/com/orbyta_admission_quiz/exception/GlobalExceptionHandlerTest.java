@@ -82,6 +82,22 @@ class GlobalExceptionHandlerTest {
         assertEquals("size must be between 5 and 10", errorsMap.get("field2"));
     }
 
+    @Test
+    @DisplayName("Handle General Exception")
+    void handleGeneralException_shouldReturnInternalServerError() {
+        Exception exception = new Exception("Test exception message");
+        ResponseEntity<Map<String, Object>> responseEntity = globalExceptionHandler.handleGeneralException(exception);
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        Map<String, Object> responseBody = responseEntity.getBody();
+        assertNotNull(responseBody);
+        assertTrue(responseBody.containsKey("timestamp"));
+        assertNotNull(responseBody.get("timestamp"));
+        assertTrue(responseBody.get("timestamp") instanceof LocalDateTime);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody.get("status"));
+        assertEquals("An unexpected error occurred", responseBody.get("message"));
+    }
+
     void dummyMethodForParameter(String param) { // This method is to create a MethodParameter instance
     }
 }
