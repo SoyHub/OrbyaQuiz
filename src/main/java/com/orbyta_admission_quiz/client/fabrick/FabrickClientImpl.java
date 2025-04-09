@@ -1,5 +1,6 @@
 package com.orbyta_admission_quiz.client.fabrick;
 
+import com.orbyta_admission_quiz.config.FabrickApiEndpointsConfig;
 import com.orbyta_admission_quiz.dto.FabrickResponse;
 import com.orbyta_admission_quiz.dto.account.response.AccountBalanceResponse;
 import com.orbyta_admission_quiz.dto.account.response.AccountTransactionsResponse;
@@ -31,6 +32,7 @@ import java.util.Objects;
 public class FabrickClientImpl implements FabrickClient {
 
     private final RestTemplate restTemplate;
+    private final FabrickApiEndpointsConfig endpointsConfig;
 
     @SneakyThrows
     private <T> T execute(String url, HttpMethod method, Object body, Map<String, Object> uriVariables, ParameterizedTypeReference<FabrickResponse<T>> typeReference) {
@@ -46,7 +48,7 @@ public class FabrickClientImpl implements FabrickClient {
     @Override
     public AccountBalanceResponse getAccountBalance(Long accountId) {
         Map<String, Object> pathVars = Map.of(Constants.ACCOUNT_ID_FIELD_KEY, accountId);
-        return execute(Constants.FABRICK_ACCOUNT_BALANCE_ENDPOINT, HttpMethod.GET, null, pathVars, new ParameterizedTypeReference<>() {
+        return execute(endpointsConfig.getAccountBalanceEndpoint(), HttpMethod.GET, null, pathVars, new ParameterizedTypeReference<>() {
         });
     }
 
@@ -55,7 +57,7 @@ public class FabrickClientImpl implements FabrickClient {
         Map<String, Object> pathVars = Map.of(Constants.ACCOUNT_ID_FIELD_KEY, accountId);
 
         String url = UriComponentsBuilder
-                .fromUriString(Constants.FABRICK_ACCOUNT_TRANSACTIONS_ENDPOINT)
+                .fromUriString(endpointsConfig.getAccountTransactionsEndpoint())
                 .queryParam("fromAccountingDate", fromDate)
                 .queryParam("toAccountingDate", toDate)
                 .buildAndExpand(pathVars)
@@ -68,7 +70,7 @@ public class FabrickClientImpl implements FabrickClient {
     @Override
     public MoneyTransferResponse createMoneyTransfer(Long accountId, MoneyTransferRequest request) {
         Map<String, Object> pathVars = Map.of(Constants.ACCOUNT_ID_FIELD_KEY, accountId);
-        return execute(Constants.FABRICK_MONEY_TRANSFER_ENDPOINT, HttpMethod.POST, request, pathVars, new ParameterizedTypeReference<>() {
+        return execute(endpointsConfig.getMoneyTransferEndpoint(), HttpMethod.POST, request, pathVars, new ParameterizedTypeReference<>() {
         });
     }
 }

@@ -1,6 +1,7 @@
 package com.orbyta_admission_quiz.client;
 
 import com.orbyta_admission_quiz.client.fabrick.FabrickClientImpl;
+import com.orbyta_admission_quiz.config.FabrickApiEndpointsConfig;
 import com.orbyta_admission_quiz.dto.account.response.AccountBalanceResponse;
 import com.orbyta_admission_quiz.dto.account.response.AccountTransactionsResponse;
 import com.orbyta_admission_quiz.dto.FabrickResponse;
@@ -8,7 +9,6 @@ import com.orbyta_admission_quiz.dto.account.response.Transaction;
 import com.orbyta_admission_quiz.dto.payments.request.MoneyTransferRequest;
 import com.orbyta_admission_quiz.dto.payments.response.MoneyTransferResponse;
 import com.orbyta_admission_quiz.exception.FabrickApiException;
-import com.orbyta_admission_quiz.util.Constants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,6 +42,8 @@ class FabrickClientImplTest {
     private RestTemplate restTemplate;
     @InjectMocks
     private FabrickClientImpl fabrickClient;
+    @Mock
+    private FabrickApiEndpointsConfig endpointsConfig;
 
     private HttpHeaders defaultHeaders;
 
@@ -68,7 +70,7 @@ class FabrickClientImplTest {
                 new ResponseEntity<>(fabrickResponse, HttpStatus.OK);
 
         when(restTemplate.exchange(
-                eq(Constants.FABRICK_ACCOUNT_BALANCE_ENDPOINT),
+                eq(endpointsConfig.getAccountBalanceEndpoint()),
                 eq(HttpMethod.GET),
                 any(HttpEntity.class),
                 any(ParameterizedTypeReference.class),
@@ -89,9 +91,10 @@ class FabrickClientImplTest {
         LocalDate fromDate = LocalDate.of(2024, 1, 1);
         LocalDate toDate = LocalDate.of(2024, 1, 31);
         Map<String, Object> pathVars = Map.of("accountId", accountId);
+        when(endpointsConfig.getAccountTransactionsEndpoint()).thenReturn("/api/gbs/banking/v4.0/accounts/{accountId}/transactions");
 
         String expectedUrl = UriComponentsBuilder
-                .fromUriString(Constants.FABRICK_ACCOUNT_TRANSACTIONS_ENDPOINT)
+                .fromUriString(endpointsConfig.getAccountTransactionsEndpoint())
                 .queryParam("fromAccountingDate", fromDate)
                 .queryParam("toAccountingDate", toDate)
                 .buildAndExpand(pathVars)
@@ -132,7 +135,7 @@ class FabrickClientImplTest {
                 errorMessage, errorStatus, errorStatus.getReasonPhrase(), defaultHeaders, null, Charset.defaultCharset());
 
         when(restTemplate.exchange(
-                eq(Constants.FABRICK_ACCOUNT_BALANCE_ENDPOINT),
+                eq(endpointsConfig.getAccountBalanceEndpoint()),
                 eq(HttpMethod.GET),
                 any(HttpEntity.class),
                 any(ParameterizedTypeReference.class),
@@ -157,8 +160,10 @@ class FabrickClientImplTest {
         HttpStatus errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         String errorMessage = "Internal Server Error";
 
+        when(endpointsConfig.getAccountTransactionsEndpoint()).thenReturn("/api/gbs/banking/v4.0/accounts/{accountId}/payments/money-transfers");
+
         String expectedUrl = UriComponentsBuilder
-                .fromUriString(Constants.FABRICK_ACCOUNT_TRANSACTIONS_ENDPOINT)
+                .fromUriString(endpointsConfig.getAccountTransactionsEndpoint())
                 .queryParam("fromAccountingDate", fromDate)
                 .queryParam("toAccountingDate", toDate)
                 .buildAndExpand(pathVars)
@@ -200,7 +205,7 @@ class FabrickClientImplTest {
                 new ResponseEntity<>(fabrickResponse, HttpStatus.OK);
 
         when(restTemplate.exchange(
-                eq(Constants.FABRICK_MONEY_TRANSFER_ENDPOINT),
+                eq(endpointsConfig.getMoneyTransferEndpoint()),
                 eq(HttpMethod.POST),
                 any(HttpEntity.class),
                 any(ParameterizedTypeReference.class),
@@ -225,7 +230,7 @@ class FabrickClientImplTest {
                 errorMessage, errorStatus, errorStatus.getReasonPhrase(), defaultHeaders, null, Charset.defaultCharset());
 
         when(restTemplate.exchange(
-                eq(Constants.FABRICK_MONEY_TRANSFER_ENDPOINT),
+                eq(endpointsConfig.getMoneyTransferEndpoint()),
                 eq(HttpMethod.POST),
                 any(HttpEntity.class),
                 any(ParameterizedTypeReference.class),
