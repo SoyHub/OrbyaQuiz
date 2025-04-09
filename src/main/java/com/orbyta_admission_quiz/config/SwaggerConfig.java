@@ -20,8 +20,8 @@ public class SwaggerConfig {
                         .description("REST API for bank account operations using Fabrick API")
                         .version("v1.0.0")
                         .contact(new Contact()
-                                .name("Developer")
-                                .email("dev@example.com"))
+                                .name("Sohayb")
+                                .email("sohaybmohammed@gmail.com"))
                         .license(new License()
                                 .name("Apache 2.0")
                                 .url("https://www.apache.org/licenses/LICENSE-2.0")))
@@ -29,7 +29,13 @@ public class SwaggerConfig {
                         .addSecuritySchemes("ApiKey", new SecurityScheme()
                                 .type(SecurityScheme.Type.APIKEY)
                                 .in(SecurityScheme.In.HEADER)
-                                .name("Api-Key")))
-                .addSecurityItem(new SecurityRequirement().addList("ApiKey"));
+                                .name("Api-Key"))
+                        .addSecuritySchemes("AuthSchema", new SecurityScheme()
+                                .type(SecurityScheme.Type.APIKEY)
+                                .in(SecurityScheme.In.HEADER)
+                                .name("Auth-Schema")))
+                .addSecurityItem(new SecurityRequirement()
+                        .addList("ApiKey")
+                        .addList("AuthSchema"));
     }
 }
