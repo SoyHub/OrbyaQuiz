@@ -36,7 +36,7 @@ class GlobalExceptionHandlerTest {
         assertNotNull(responseBody);
         assertTrue(responseBody.containsKey("timestamp"));
         assertNotNull(responseBody.get("timestamp"));
-        assertTrue(responseBody.get("timestamp") instanceof LocalDateTime);
+        assertInstanceOf(LocalDateTime.class, responseBody.get("timestamp"));
         assertEquals("Fabrick API", responseBody.get("step"));
         assertEquals("Error communicating with Fabrick", responseBody.get("rawErrorMessage"));
         assertTrue(responseBody.containsKey("errorDetails"));
@@ -66,13 +66,13 @@ class GlobalExceptionHandlerTest {
         assertNotNull(responseBody);
         assertTrue(responseBody.containsKey("timestamp"));
         assertNotNull(responseBody.get("timestamp"));
-        assertTrue(responseBody.get("timestamp") instanceof LocalDateTime);
+        assertInstanceOf(LocalDateTime.class, responseBody.get("timestamp"));
         assertEquals(HttpStatus.BAD_REQUEST.value(), responseBody.get("status"));
 
         assertTrue(responseBody.containsKey("errors"));
         Object errorsObject = responseBody.get("errors");
         assertNotNull(errorsObject);
-        assertTrue(errorsObject instanceof Map);
+        assertInstanceOf(Map.class, errorsObject);
 
         @SuppressWarnings("unchecked")
         Map<String, String> errorsMap = (Map<String, String>) errorsObject;
@@ -93,7 +93,7 @@ class GlobalExceptionHandlerTest {
         assertNotNull(responseBody);
         assertTrue(responseBody.containsKey("timestamp"));
         assertNotNull(responseBody.get("timestamp"));
-        assertTrue(responseBody.get("timestamp") instanceof LocalDateTime);
+        assertInstanceOf(LocalDateTime.class, responseBody.get("timestamp"));
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), responseBody.get("status"));
         assertEquals("An unexpected error occurred", responseBody.get("message"));
     }

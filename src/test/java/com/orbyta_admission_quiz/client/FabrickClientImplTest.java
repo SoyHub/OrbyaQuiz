@@ -142,9 +142,7 @@ class FabrickClientImplTest {
                 eq(pathVars)))
                 .thenThrow(exception);
 
-        FabrickApiException thrown = assertThrows(FabrickApiException.class, () -> {
-            fabrickClient.getAccountBalance(accountId);
-        });
+        FabrickApiException thrown = assertThrows(FabrickApiException.class, () -> fabrickClient.getAccountBalance(accountId));
 
         assertEquals(errorMessage, thrown.getRawMessage());
         assertEquals(errorStatus.value(), thrown.getHttpStatus());
@@ -180,9 +178,7 @@ class FabrickClientImplTest {
                 eq(Collections.emptyMap())))
                 .thenThrow(exception);
 
-        FabrickApiException thrown = assertThrows(FabrickApiException.class, () -> {
-            fabrickClient.getAccountTransactions(accountId, fromDate, toDate);
-        });
+        FabrickApiException thrown = assertThrows(FabrickApiException.class, () -> fabrickClient.getAccountTransactions(accountId, fromDate, toDate));
 
         assertEquals(errorMessage, thrown.getRawMessage());
         assertEquals(errorStatus.value(), thrown.getHttpStatus());
@@ -237,9 +233,7 @@ class FabrickClientImplTest {
                 eq(pathVars)))
                 .thenThrow(exception);
 
-        FabrickApiException thrown = assertThrows(FabrickApiException.class, () -> {
-            fabrickClient.createMoneyTransfer(accountId, requestBody);
-        });
+        FabrickApiException thrown = assertThrows(FabrickApiException.class, () -> fabrickClient.createMoneyTransfer(accountId, requestBody));
 
         assertEquals(errorMessage, thrown.getRawMessage());
         assertEquals(errorStatus.value(), thrown.getHttpStatus());
