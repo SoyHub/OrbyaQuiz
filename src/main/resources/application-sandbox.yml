@@ -21,6 +21,10 @@ logging:
 fabrick:
   api:
     baseUrl: https://sandbox.platfr.io
+    endpoints:
+      accountBalanceEndpoint: /api/gbs/banking/v4.0/accounts/{accountId}/balance
+      accountTransactionsEndpoint: /api/gbs/banking/v4.0/accounts/{accountId}/transactions
+      moneyTransferEndpoint: /api/gbs/banking/v4.0/accounts/{accountId}/payments/money-transfers
 springdoc:
   api-docs:
     path: /v3/api-docs
