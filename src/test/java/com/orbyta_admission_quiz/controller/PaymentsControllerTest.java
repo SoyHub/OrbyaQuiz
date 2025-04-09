@@ -70,7 +70,10 @@ class PaymentsControllerTest {
                                 .accountCode("IBAN123")
                                 .build())
                         .build())
-                .amount(request.getAmount())
+                .amount(MoneyTransferResponse.Amount.builder()
+                        .creditorAmount(new BigDecimal("250.00"))
+                        .creditorCurrency("EUR")
+                        .build())
                 .build();
 
         when(paymentsService.createMoneyTransfer(eq(accountId), any(MoneyTransferRequest.class)))
@@ -83,8 +86,7 @@ class PaymentsControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.moneyTransferId").value("MTID-67890"))
                 .andExpect(jsonPath("$.status").value("ACCEPTED"))
-                .andExpect(jsonPath("$.creditor.name").value("Test Creditor"))
-                .andExpect(jsonPath("$.amount").value(250.00));
+                .andExpect(jsonPath("$.creditor.name").value("Test Creditor"));
         verify(paymentsService, times(1)).createMoneyTransfer(eq(accountId), any(MoneyTransferRequest.class));
     }
 

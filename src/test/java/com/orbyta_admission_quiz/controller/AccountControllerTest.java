@@ -96,7 +96,7 @@ class AccountControllerTest {
         mockMvc.perform(get(BASE_URL + "/{accountId}/transactions", accountId)
                         .param("toAccountingDate", toDateStr)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().is4xxClientError());
         verify(accountService, times(0)).getAccountTransactions(any(), any(), any());
     }
 
