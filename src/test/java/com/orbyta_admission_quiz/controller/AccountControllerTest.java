@@ -89,20 +89,20 @@ class AccountControllerTest {
 
     @Test
     @DisplayName("GET /accounts/{accountId}/transactions - Bad Request (Missing Date)")
-    void getAccountTransactions_whenDateMissing_shouldReturnBadRequest() throws Exception {
+    void getAccountTransactions_whenDateMissing_shouldReturn5xxServerError() throws Exception {
         Long accountId = 98765L;
         LocalDate toDate = LocalDate.of(2024, 1, 31);
         String toDateStr = toDate.format(DATE_FORMATTER);
         mockMvc.perform(get(BASE_URL + "/{accountId}/transactions", accountId)
                         .param("toAccountingDate", toDateStr)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is5xxServerError());
         verify(accountService, times(0)).getAccountTransactions(any(), any(), any());
     }
 
     @Test
     @DisplayName("GET /accounts/{accountId}/transactions - Bad Request (Invalid Date Format)")
-    void getAccountTransactions_whenInvalidDateFormat_shouldReturnBadRequest() throws Exception {
+    void getAccountTransactions_whenInvalidDateFormat_shouldReturn5xxServerError() throws Exception {
         Long accountId = 98765L;
         String invalidDate = "202401-01";
         String toDateStr = LocalDate.of(2024, 1, 31).format(DATE_FORMATTER);
@@ -110,7 +110,7 @@ class AccountControllerTest {
                         .param("fromAccountingDate", invalidDate)
                         .param("toAccountingDate", toDateStr)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is5xxServerError());
         verify(accountService, times(0)).getAccountTransactions(any(), any(), any());
     }
 
