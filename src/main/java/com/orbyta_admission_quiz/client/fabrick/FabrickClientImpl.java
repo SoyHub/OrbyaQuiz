@@ -48,8 +48,7 @@ public class FabrickClientImpl implements FabrickClient {
     @Override
     public AccountBalanceResponse getAccountBalance(Long accountId) {
         Map<String, Object> pathVars = Map.of(Constants.ACCOUNT_ID_FIELD_KEY, accountId);
-        return execute(endpointsConfig.getAccountBalanceEndpoint(), HttpMethod.GET, null, pathVars, new ParameterizedTypeReference<>() {
-        });
+        return execute(endpointsConfig.getAccountBalanceEndpoint(), HttpMethod.GET, null, pathVars, new ParameterizedTypeReference<>() {});
     }
 
     @Override
@@ -58,19 +57,17 @@ public class FabrickClientImpl implements FabrickClient {
 
         String url = UriComponentsBuilder
                 .fromUriString(endpointsConfig.getAccountTransactionsEndpoint())
-                .queryParam("fromAccountingDate", fromDate)
-                .queryParam("toAccountingDate", toDate)
+                .queryParam(Constants.FROM_ACCOUNTING_DATE_FIELD_KEY, fromDate)
+                .queryParam(Constants.TO_ACCOUNTING_DATE_FIELD_KEY, toDate)
                 .buildAndExpand(pathVars)
                 .toUriString();
 
-        return execute(url, HttpMethod.GET, null, Collections.emptyMap(), new ParameterizedTypeReference<>() {
-        });
+        return execute(url, HttpMethod.GET, null, Collections.emptyMap(), new ParameterizedTypeReference<>() {});
     }
 
     @Override
     public MoneyTransferResponse createMoneyTransfer(Long accountId, MoneyTransferRequest request) {
         Map<String, Object> pathVars = Map.of(Constants.ACCOUNT_ID_FIELD_KEY, accountId);
-        return execute(endpointsConfig.getMoneyTransferEndpoint(), HttpMethod.POST, request, pathVars, new ParameterizedTypeReference<>() {
-        });
+        return execute(endpointsConfig.getMoneyTransferEndpoint(), HttpMethod.POST, request, pathVars, new ParameterizedTypeReference<>() {});
     }
 }
