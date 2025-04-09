@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: orbyta-quiz
   datasource:
     url: jdbc:h2:mem:fabrickdb
     driverClassName: org.h2.Driver
@@ -31,3 +29,5 @@ springdoc:
     operationsSorter: method
     tagsSorter: alpha
     expansion: none
+server:
+  port: 8080
