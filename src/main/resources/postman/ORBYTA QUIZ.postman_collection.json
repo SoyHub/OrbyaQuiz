@@ -405,14 +405,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/api/v1/accounts/14537780/payments/money-transfers",
+									"raw": "{{base_url}}/{{base_path_account}}/14537780/payments/money-transfers",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"api",
-										"v1",
-										"accounts",
+										"{{base_path_account}}",
 										"14537780",
 										"payments",
 										"money-transfers"
