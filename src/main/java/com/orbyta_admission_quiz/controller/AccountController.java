@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -32,28 +31,23 @@ public class AccountController {
     @Operation(summary = "Get account balance by account ID", description = "Fetches the balance for a specific account ID. If no account ID is provided, the default account ID is used.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Balance retrieved successfully", content = @Content(schema = @Schema(implementation = AccountBalanceResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid account ID supplied"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "400", description = "Invalid account ID supplied", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<AccountBalanceResponse> getAccountBalance(@PathVariable(required = false) Long accountId) {
+    public AccountBalanceResponse getAccountBalance(@PathVariable Long accountId) {
         log.info("Getting balance for account: {}", accountId);
-        AccountBalanceResponse balance = accountService.getAccountBalance(accountId);
-        return ResponseEntity.ok(balance);
+        return accountService.getAccountBalance(accountId);
     }
 
+    @Operation(summary = "Get account transactions by account ID and date range", description = "Fetches transactions for a specific account ID within a given date range.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Transactions retrieved successfully", content = @Content(schema = @Schema(implementation = Transaction.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid account ID or date range supplied", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
     @GetMapping("/{accountId}/transactions")
-    public ResponseEntity<List<Transaction>> getAccountTransactions(@PathVariable(required = false) Long accountId, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fromAccountingDate, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate toAccountingDate) {
+    public List<Transaction> getAccountTransactions(@PathVariable Long accountId, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fromAccountingDate, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate toAccountingDate) {
         log.info("Getting transactions for account: {} from {} to {}", accountId, fromAccountingDate, toAccountingDate);
-
-        /* Check DB - if Needed
-            Optional<List<Transaction>> storedTransactions = accountService.getStoredTransactions(accountId, fromAccountingDate, toAccountingDate);
-            if (storedTransactions.isPresent()) {
-                log.info("Returning stored transactions");
-                return ResponseEntity.ok(storedTransactions.get());
-            }
-        */
-
-        List<Transaction> transactions = accountService.getAccountTransactions(accountId, fromAccountingDate, toAccountingDate);
-        return ResponseEntity.ok(transactions);
+        return accountService.getAccountTransactions(accountId, fromAccountingDate, toAccountingDate);
     }
 }
