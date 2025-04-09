@@ -33,9 +33,19 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<Transaction> getAccountTransactions(Long accountId, LocalDate fromDate, LocalDate toDate) {
         log.debug("Fetching transactions for account: {} from {} to {}", accountId, fromDate, toDate);
+
+        /* If needed, uncomment the following lines to fetch saved transactions from the db
+            Optional<List<Transaction>> storedTransactions = getStoredTransactions(accountId, fromDate, toDate);
+            if (storedTransactions.isPresent()) {
+                log.debug("Successfully fetched {} transactions from DB for account: {}", storedTransactions.get().size(), accountId);
+                return storedTransactions.get();
+            }
+        */
+
         AccountTransactionsResponse response = fabrickClient.getAccountTransactions(accountId, fromDate, toDate);
         List<Transaction> transactions = response.getList();
         transactions.forEach(tx -> tx.setAccountId(accountId));
+
         transactionRepository.saveAll(transactions);
         log.debug("Successfully fetched {} transactions for account: {}", transactions.size(), accountId);
         return transactions;
