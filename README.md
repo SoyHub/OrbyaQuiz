@@ -6,6 +6,12 @@
 3. [Componenti Principali](#componenti-principali)
 4. [API REST Esposte](#api-rest-esposte)
 5. [Integrazione con Fabrick API](#integrazione-con-fabrick-api)
+6. [Persistenza Dati (Opzionale)](#persistenza-dati-opzionale)
+7. [Testing](#testing)
+8. [Gestione degli Errori](#gestione-degli-errori)
+9. [Configurazione](#configurazione)
+10. [Come Eseguire](#come-eseguire)
+11. [Postman Collection](#postman-collection)
 
 ## Panoramica del Progetto
 
@@ -257,7 +263,162 @@ L'applicazione si integra con le seguenti API di Fabrick:
 
 ```mermaid
 graph LR
-    A[FabrickApiClient] -->|config| B[RestTemplate con interceptor]
+    A[FabrickApiClient] -->|config| B[interceptor]
     B -->|headers| C[Auth-Schema: S2S]
-    B -->|headers| D[Api-Key: FXOVVXXH...]
+    B -->|headers| D[Api-Key: XXXXXXX...]
 ```
+
+## Persistenza Dati (Opzionale)
+
+L'applicazione include un modulo opzionale per la persistenza dei dati utilizzando un database H2 in memoria:
+
+### Schema del Database
+
+```mermaid
+erDiagram
+    TRANSACTION {
+        string transactionId
+        string operationId
+        date accountingDate
+        date valueDate
+        decimal amount
+        string currency
+        string description
+        long accountId
+    }
+```
+
+
+
+## Testing
+
+L'applicazione include test unitari e di integrazione per garantire la qualità e la robustezza del codice:
+
+### Strategia di Test
+
+```mermaid
+graph TD
+    A[Unit Tests] -->|Test| B[Controller Layer]
+    A -->|Test| C[Service Layer]
+    A -->|Test| D[Repository Layer]
+    A -->|Test| E[Client Layer]
+    
+    F[Integration Tests] -->|Test| G[API Endpoints]
+    F -->|Test| H[Database Integration]
+    
+    I[Mock Tests] -->|Mock| J[External API]
+```
+
+Le categorie principali di test includono:
+
+1. **Test Unitari**:
+   - Test dei controller con MockMvc
+   - Test dei servizi con Mockito
+   - Test dei repository
+
+2. **Test di Integrazione**:
+   - Test end-to-end con database in memoria
+   - Test di integrazione delle API
+
+## Gestione degli Errori
+
+L'applicazione implementa una gestione centralizzata degli errori utilizzando `@ControllerAdvice` e gestori di eccezioni personalizzati:
+
+```mermaid
+graph LR
+    C[FabrickApiException] -->|handled by| B
+    E[ValidationException] -->|handled by| B
+    B -->|returns| F[ErrorResponse]
+```
+
+### Tipi di Errori Gestiti
+
+1. **Errori API esterne**: Gestisce gli errori restituiti dalle API Fabrick
+2. **Errori di validazione**: Gestisce gli errori di validazione dei dati in input
+3. **Errori generici**: Gestisce qualsiasi altro tipo di errore imprevisto
+
+## Configurazione
+
+Le principali configurazioni dell'applicazione sono gestite tramite:
+######  - `application.yml`:
+
+```properties
+spring:
+  application:
+    name: orbyta-quiz
+  profiles:
+    active: sandbox
+```
+Questo garantisce che l'applicazione utilizzi il file application-sandbox.yml per le configurazioni specifiche dell'ambiente.
+
+######  - `application-sandbox.yml`:
+```properties
+spring:
+  datasource:
+    url: jdbc:h2:mem:fabrickdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+logging:
+  level:
+    com.orbyta_admission_quiz: DEBUG
+    org:
+      springframework:
+        web:
+          client:
+            RestTemplate: DEBUG
+fabrick:
+  api:
+    baseUrl: https://sandbox.platfr.io
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    expansion: none
+server:
+  port: 8081
+```
+## Come Eseguire
+
+### Prerequisiti
+- Java 17
+- Maven
+
+### Comandi
+
+1. **Clonare il repository**:
+   ```bash
+   git clone https://github.com/SoyHub/OrbyaQuiz?tab=readme-ov-file#integrazione-con-fabrick-api
+   ```
+
+2. **Compilare e creare il pacchetto**:
+   ```bash
+   mvn clean package
+   ```
+
+3. **Eseguire l'applicazione**:
+   ```bash
+   java -jar target/orbyta-quiz-0.0.1-SNAPSHOT.jar
+   ```
+
+4. **Eseguire i test**:
+   ```bash
+   mvn test
+   ```
+   
+## Postman Collection
+La collezione Postman per testare le API è disponibile nel file `resources/postman/ORBYTA-QUIZ.postman_collection.json`. 
+Si puo importare questo file in Postman per testare le API direttamente.
+Si ricorda di importare anche l'ambiente Postman: 
+- `Orbyta-Quiz-Local.postman_environment.json` (per l'esecuzione locale)
+- `Orbyta-Quiz-Sandbox.postman_environment.json` (per l'esecuzione in sandbox)
+
