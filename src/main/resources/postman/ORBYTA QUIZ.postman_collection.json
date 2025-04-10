@@ -17,8 +17,7 @@
 							{
 								"key": "X-Time-Zone",
 								"value": "Europe/Rome",
-								"type": "text",
-								"disabled": true
+								"type": "text"
 							},
 							{
 								"key": "Auth-Schema",
@@ -125,8 +124,7 @@
 							{
 								"key": "X-Time-Zone",
 								"value": "Europe/Rome",
-								"type": "text",
-								"disabled": true
+								"type": "text"
 							},
 							{
 								"key": "Auth-Schema",
@@ -140,7 +138,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{base_path_account}}/14537780/transactions?fromAccountingDate=2019-04-01&toAccountingDate=2019-06-01",
+							"raw": "{{base_url}}/{{base_path_account}}/14537780/transactions?toAccountingDate=2025-04-01&fromAccountingDate=2024-01-01",
 							"host": [
 								"{{base_url}}"
 							],
@@ -151,17 +149,17 @@
 							],
 							"query": [
 								{
-									"key": "fromAccountingDate",
-									"value": "2019-04-01"
-								},
-								{
-									"key": "toAccountingDate",
-									"value": "2019-06-01"
-								},
-								{
 									"key": "Api-Key",
 									"value": "",
 									"disabled": true
+								},
+								{
+									"key": "toAccountingDate",
+									"value": "2025-04-01"
+								},
+								{
+									"key": "fromAccountingDate",
+									"value": "2024-01-01"
 								}
 							]
 						}
@@ -350,7 +348,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"creditor\": {\n    \"name\": \"John Doe\",\n    \"account\": {\n      \"accountCode\": \"IT23A0336844430152923804660\",\n      \"bicCode\": \"SELBIT2BXXX\"\n    },\n    \"address\": {\n      \"address\": null,\n      \"city\": null,\n      \"countryCode\": null\n    }\n  },\n  \"executionDate\": \"2025-05-01\",\n  \"uri\": \"REMITTANCE_INFORMATION\",\n  \"description\": \"Payment invoice 75/2017\",\n  \"amount\": 800,\n  \"currency\": \"EUR\",\n  \"isUrgent\": false,\n  \"isInstant\": false,\n  \"feeType\": \"SHA\",\n  \"feeAccountId\": \"14537780\",\n  \"taxRelief\": {\n    \"taxReliefId\": \"L449\",\n    \"isCondoUpgrade\": false,\n    \"creditorFiscalCode\": \"56258745832\",\n    \"beneficiaryType\": \"NATURAL_PERSON\",\n    \"naturalPersonBeneficiary\": {\n      \"fiscalCode1\": \"MRLFNC81L04A859L\",\n      \"fiscalCode2\": null,\n      \"fiscalCode3\": null,\n      \"fiscalCode4\": null,\n      \"fiscalCode5\": null\n    },\n    \"legalPersonBeneficiary\": {\n      \"fiscalCode\": null,\n      \"legalRepresentativeFiscalCode\": null\n    }\n  }\n}",
+							"raw": "{\n  \"creditor\": {\n    \"name\": \"TERRIBILE LUCA\",\n    \"account\": {\n      \"accountCode\": \"IT33U36772223000EM000002145\"\n    }\n  },\n  \"executionDate\": \"2025-04-30\",\n  \"description\": \"Payment invoice 5/2025\",\n  \"amount\": 20,\n  \"currency\": \"EUR\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -372,6 +370,54 @@
 					},
 					"response": [
 						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-Time-Zone",
+										"value": "Europe/Rome",
+										"type": "text"
+									},
+									{
+										"key": "Auth-Schema",
+										"value": "S2S",
+										"type": "text"
+									},
+									{
+										"key": "Api-Key",
+										"value": "FXOVVXXHVCPVPBZXIJOBGUGSKHDNFRRQJP",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"creditor\": {\n    \"name\": \"TERRIBILE LUCA\",\n    \"account\": {\n      \"accountCode\": \"IT33U36772223000EM000002145\"\n    }\n  },\n  \"executionDate\": \"2025-04-30\",\n  \"description\": \"Payment invoice 5/2025\",\n  \"amount\": 20,\n  \"currency\": \"EUR\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{base_path_account}}/14537780/payments/money-transfers",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{base_path_account}}",
+										"14537780",
+										"payments",
+										"money-transfers"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						},
+						{
 							"name": "NO AUTH KEY",
 							"originalRequest": {
 								"method": "POST",
@@ -385,8 +431,7 @@
 									{
 										"key": "Auth-Schema",
 										"value": "S2S",
-										"type": "text",
-										"disabled": true
+										"type": "text"
 									},
 									{
 										"key": "Api-Key",

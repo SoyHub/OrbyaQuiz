@@ -1,16 +1,16 @@
 package com.orbyta_admission_quiz.dto.payments.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.orbyta_admission_quiz.dto.account.response.Creditor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MoneyTransferResponse {
     @JsonProperty("moneyTransferId")
     private String moneyTransferId;
@@ -38,11 +39,9 @@ public class MoneyTransferResponse {
     @JsonProperty("description")
     private String description;
     @JsonProperty("createdDatetime")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    private LocalDateTime createdDatetime;
+    private String createdDatetime;
     @JsonProperty("accountedDatetime")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    private LocalDateTime accountedDatetime;
+    private String accountedDatetime;
     @JsonProperty("debtorValueDate")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate debtorValueDate;
@@ -52,9 +51,9 @@ public class MoneyTransferResponse {
     @JsonProperty("amount")
     private Amount amount;
     @JsonProperty("isUrgent")
-    private boolean isUrgent;
+    private Boolean isUrgent;
     @JsonProperty("isInstant")
-    private boolean isInstant;
+    private Boolean isInstant;
     @JsonProperty("feeType")
     private String feeType;
     @JsonProperty("feeAccountId")
@@ -62,12 +61,13 @@ public class MoneyTransferResponse {
     @JsonProperty("fees")
     private List<Fee> fees;
     @JsonProperty("hasTaxRelief")
-    private boolean hasTaxRelief;
+    private Boolean hasTaxRelief;
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Debtor {
         @JsonProperty("name")
         private String name;
@@ -90,6 +90,7 @@ public class MoneyTransferResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Amount {
         @JsonProperty("debtorAmount")
         private BigDecimal debtorAmount;
@@ -110,6 +111,7 @@ public class MoneyTransferResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Fee {
         @JsonProperty("feeCode")
         private String feeCode;
