@@ -3,3 +3,12 @@ spring:
     name: orbyta-quiz
   profiles:
     active: sandbox
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%X{requestId}] %-5level - %msg%n"
+  level:
+    org:
+      springframework:
+        web:
+          client:
+            RestTemplate: OFF

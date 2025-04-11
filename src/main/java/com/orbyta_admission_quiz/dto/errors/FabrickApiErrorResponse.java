@@ -20,5 +20,4 @@ public class FabrickApiErrorResponse {
     private Map<String, Object> errorDetails;
     private String message;
     private String rawErrorMessage;
-    private Integer httpStatus;
 }

@@ -35,7 +35,6 @@ public class AccountController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public AccountBalanceResponse getAccountBalance(@PathVariable Long accountId) {
-        log.info("Getting balance for account: {}", accountId);
         return accountService.getAccountBalance(accountId);
     }
 
@@ -47,7 +46,6 @@ public class AccountController {
     })
     @GetMapping("/{accountId}/transactions")
     public List<Transaction> getAccountTransactions(@PathVariable Long accountId, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fromAccountingDate, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate toAccountingDate) {
-        log.info("Getting transactions for account: {} from {} to {}", accountId, fromAccountingDate, toAccountingDate);
         return accountService.getAccountTransactions(accountId, fromAccountingDate, toAccountingDate);
     }
 }

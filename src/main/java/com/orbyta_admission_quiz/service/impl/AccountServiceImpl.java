@@ -24,16 +24,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountBalanceResponse getAccountBalance(Long accountId) {
-        log.debug("Fetching balance for account: {}", accountId);
-        AccountBalanceResponse response = fabrickClient.getAccountBalance(accountId);
-        log.debug("Successfully fetched balance for account: {}", accountId);
-        return response;
+        return fabrickClient.getAccountBalance(accountId);
     }
 
     @Override
     public List<Transaction> getAccountTransactions(Long accountId, LocalDate fromDate, LocalDate toDate) {
-        log.debug("Fetching transactions for account: {} from {} to {}", accountId, fromDate, toDate);
-
         /* If needed, uncomment the following lines to fetch saved transactions from the db
             Optional<List<Transaction>> storedTransactions = getStoredTransactions(accountId, fromDate, toDate);
             if (storedTransactions.isPresent()) {
@@ -47,13 +42,11 @@ public class AccountServiceImpl implements AccountService {
         transactions.forEach(tx -> tx.setAccountId(accountId));
 
         transactionRepository.saveAll(transactions);
-        log.debug("Successfully fetched {} transactions for account: {}", transactions.size(), accountId);
         return transactions;
     }
 
     @Override
     public Optional<List<Transaction>> getStoredTransactions(Long accountId, LocalDate fromDate, LocalDate toDate) {
-        log.debug("Fetching stored transactions for account: {} from {} to {}", accountId, fromDate, toDate);
         List<Transaction> transactions = transactionRepository.findByAccountIdAndAccountingDateBetween(accountId, fromDate, toDate);
         return transactions.isEmpty() ? Optional.empty() : Optional.of(transactions);
     }

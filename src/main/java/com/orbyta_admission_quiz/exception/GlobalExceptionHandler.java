@@ -27,7 +27,6 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .status(ex.getHttpStatus())
                 .method(ex.getStackTrace()[1].getMethodName())
-                .httpStatus(ex.getHttpStatus())
                 .rawErrorMessage(ex.getRawMessage());
 
         try {

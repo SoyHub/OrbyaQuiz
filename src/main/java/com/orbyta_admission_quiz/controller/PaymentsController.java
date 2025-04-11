@@ -35,7 +35,6 @@ public class PaymentsController {
     })
     @PostMapping("/{accountId}/payments/money-transfers")
     public ResponseEntity<Object> createMoneyTransfer(@PathVariable Long accountId, @Valid @RequestBody MoneyTransferRequest request) {
-        log.info("Creating money transfer for account: {} to {}", accountId, request.getCreditor().getName());
         MoneyTransferResponse response = paymentsService.createMoneyTransfer(accountId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

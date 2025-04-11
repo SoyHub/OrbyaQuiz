@@ -10,8 +10,9 @@
 7. [Testing](#testing)
 8. [Gestione degli Errori](#gestione-degli-errori)
 9. [Configurazione](#configurazione)
-10. [Come Eseguire](#come-eseguire)
-11. [Postman Collection](#postman-collection)
+10. [Logging](#logging)
+11. [Come Eseguire](#come-eseguire)
+12. [Postman Collection](#postman-collection)
 
 ## Panoramica del Progetto
 
@@ -97,6 +98,7 @@ com.orbyta_admission_quiz
 │       ├──── response/      # Oggetti risposta
 │   └── errors/              # Oggetti di errore
 ├── exception/               # Classi per la gestione delle eccezioni
+├── logging/                 # Configurazione del logging, AOP, MDC
 ├── repository/              # Interfacce di accesso ai dati
 ├── service/                 # Servizi di business logic
 │   └── impl/                # Implementazioni dei servizi
@@ -179,62 +181,59 @@ POST /api/v1/accounts/14537780/payments/money-transfers
 **Corpo della richiesta**:
 ```json
 {
-    "creditor": {
-        "name": "John Doe",
-        "account": {
-            "accountCode": "IT23A0336844430152923804660",
-            "bicCode": "SELBIT2BXXX"
-        },
-        "address": {
-            "address": null,
-            "city": null,
-            "countryCode": null
-        }
-    },
-    "executionDate": "2025-05-01",
-    "uri": "REMITTANCE_INFORMATION",
-    "description": "Payment invoice 75/2017",
-    "amount": 800,
-    "currency": "EUR",
-    "isUrgent": false,
-    "isInstant": false,
-    "feeType": "SHA",
-    "feeAccountId": "14537780",
-    "taxRelief": {
-        "taxReliefId": "L449",
-        "isCondoUpgrade": false,
-        "creditorFiscalCode": "56258745832",
-        "beneficiaryType": "NATURAL_PERSON",
-        "naturalPersonBeneficiary": {
-            "fiscalCode1": "MRLFNC81L04A859L"
-        },
-        "legalPersonBeneficiary": {
-            "fiscalCode": null,
-            "legalRepresentativeFiscalCode": null
-        }
-    }
+   "creditor": {
+      "name": "TERRIBILE LUCA",
+      "account": {
+         "accountCode": "IT33U36772223000EM000002145"
+      }
+   },
+   "executionDate": "2025-04-30",
+   "description": "Payment invoice 5/2025",
+   "amount": 20,
+   "currency": "EUR"
 }
 ```
 
 **Risposta attuale** (nell'ambiente sandbox):
 ```json
 {
-    "method": "createMoneyTransfer",
-    "step": "Fabrick API",
-    "rawErrorMessage": "400 Bad Request on POST request for \"https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/14537780/payments/money-transfers\": \"{<EOL><EOL>  \"status\" : \"KO\",<EOL><EOL>  \"errors\" :  [<EOL><EOL>??{<EOL><EOL>???\"code\" : \"API000\",<EOL><EOL>???\"description\" : \"IbanBeneficiario è obbligatorio\",<EOL><EOL>???\"params\" : \"\"<EOL><EOL>??}<EOL><EOL>?],<EOL><EOL>  \"payload\": {}<EOL><EOL>}\"",
-    "timestamp": "2025-04-09T01:22:42.554071",
-    "errorDetails": {
-        "status": "KO",
-        "errors": [
-            {
-                "code": "API000",
-                "description": "IbanBeneficiario è obbligatorio",
-                "params": ""
-            }
-        ],
-        "payload": {}
-    },
-    "status": 400
+  "moneyTransferId": "611010968",
+  "status": "BOOKED",
+  "direction": "OUTGOING",
+  "creditor": {
+    "name": "TERRIBILE LUCA",
+    "account": {
+      "accountCode": "IT33U36772223000EM000002145",
+      "bicCode": "HYEEIT22XXX"
+    }
+  },
+  "debtor": {
+    "name": "LUCA TERRIBILE",
+    "account": {
+      "accountCode": "IT40L0326822311052923800661",
+      "bicCode": null
+    }
+  },
+  "cro": "1851425001003268",
+  "uri": "NOTPROVIDED",
+  "trn": "",
+  "description": "PAYMENT INVOICE 5/2025",
+  "createdDatetime": "2025-04-10T23:14:23.927+0200",
+  "accountedDatetime": "",
+  "debtorValueDate": "2025-04-30",
+  "creditorValueDate": "2025-04-30",
+  "amount": {
+    "debtorAmount": 20,
+    "debtorCurrency": "EUR",
+    "creditorAmount": 20,
+    "creditorCurrency": "EUR"
+  },
+  "isUrgent": false,
+  "isInstant": false,
+  "feeType": "SHA",
+  "feeAccountId": "14537780",
+  "fees": [],
+  "hasTaxRelief": false
 }
 ```
 
@@ -387,6 +386,43 @@ springdoc:
 server:
   port: 8081
 ```
+## Logging
+L'applicazione utilizza un sistema di logging avanzato basato su Spring AOP e SLF4j con MDC (Mapped Diagnostic Context) per tracciare le chiamate ai metodi e le richieste HTTP.
+
+### Componenti di Logging
+#### 1- MDCFilter: 
+
+Un filtro servlet che intercetta ogni richiesta HTTP in entrata. Genera un requestId univoco (un UUID troncato) e lo aggiunge al contesto MDC di SLF4j. Questo ID viene incluso in tutti i log generati durante l'elaborazione di quella specifica richiesta, facilitando il tracciamento end-to-end. L'ID viene rimosso dall'MDC al termine della richiesta.
+
+
+#### 2- LoggingAspect: 
+
+Un aspect AOP che intercetta le chiamate ai metodi nei layer Controller, Service, Repository, Client e alle chiamate RestTemplate.
+  - Utilizza LoggingUtils per gestire la profondità della chiamata (indentazione nei log tramite > e <) e per serializzare argomenti e risultati in formato JSON.
+  - Logga l'ingresso nel metodo (classe, nome metodo, argomenti JSON).
+  - Logga l'uscita dal metodo (classe, nome metodo, tempo di esecuzione, risultato JSON).
+  - Logga eventuali eccezioni sollevate, includendo il messaggio, il tempo di esecuzione e gli argomenti originali.
+
+### Formato dei Log
+Il pattern di logging definito in application.yml (%d{yyyy-MM-dd HH:mm:ss} [%X{requestId}] %-5level - %msg%n) assicura che ogni riga di log includa:
+- Timestamp
+- requestId (preso dall'MDC)
+- Livello di log (INFO, ERROR, etc.)
+- Messaggio di log (generato dall'LoggingAspect)
+
+### Esempio di Log
+Questo esempio mostra come i log tracciano una richiesta per ottenere il saldo di un conto, includendo il requestId (fc2f5fbf), l'indentazione basata sulla profondità della chiamata, i tempi di esecuzione e i dati serializzati in JSON.
+```plaintext
+2025-04-11 00:26:09 [fc2f5fbf] INFO  - > AccountController.getAccountBalance() argsJson=[14537780]
+2025-04-11 00:26:09 [fc2f5fbf] INFO  - >> AccountServiceImpl.getAccountBalance() argsJson=[14537780]
+2025-04-11 00:26:09 [fc2f5fbf] INFO  - >>> FabrickClientImpl.getAccountBalance() argsJson=[14537780]
+2025-04-11 00:26:09 [fc2f5fbf] INFO  - >>>> RestTemplate.exchange() argsJson=["/api/gbs/banking/v4.0/accounts/{accountId}/balance", "GET", {"headers":{"Content-Type":["application/json"],"Api-Key":["FXOVVXXHVCPVPBZXIJOBGUGSKHDNFRRQJP"],"Auth-Schema":["S2S"],"X-Time-Zone":["Europe/Rome"]},"body":null}, "ParameterizedTypeReference<com.orbyta_admission_quiz.dto.FabrickResponse<com.orbyta_admission_quiz.dto.account.response.AccountBalanceResponse>>", {"accountId":14537780}]
+2025-04-11 00:26:10 [fc2f5fbf] INFO  - <<<< RestTemplate.exchange() time=795ms resultJson={"headers":{"content-type":["application/json"],"date":["Thu, 10 Apr 2025 22:26:10 GMT"],"max-forwards":["19"],"server":[""],"strict-transport-security":["max-age=31536000; includeSubDomains"],"transfer-encoding":["chunked"],"via":["1.1 fbkprsndgtm01 (), 1.1 fbkprsndgtm01 ()"],"x-content-type-options":["nosniff"],"x-correlationid":["Id-8245f867b523685beb4ead84 0; Id-8245f86775a47043c4351d19 0"],"x-frame-options":["SAMEORIGIN"],"x-time-zone":["Europe/Rome"],"x-xss-protection":["1; mode=block"]},"body":{"status":"OK","error":[],"payload":{"balance":-3.96,"availableBalance":-3.96,"currency":"EUR","date":"2025-04-11"},"success":true},"statusCode":"OK","statusCodeValue":200}
+2025-04-11 00:26:10 [fc2f5fbf] INFO  - <<< FabrickClientImpl.getAccountBalance() time=810ms resultJson={"balance":-3.96,"availableBalance":-3.96,"currency":"EUR","date":"2025-04-11"}
+2025-04-11 00:26:10 [fc2f5fbf] INFO  - << AccountServiceImpl.getAccountBalance() time=810ms resultJson={"balance":-3.96,"availableBalance":-3.96,"currency":"EUR","date":"2025-04-11"}
+2025-04-11 00:26:10 [fc2f5fbf] INFO  - < AccountController.getAccountBalance() time=817ms resultJson={"balance":-3.96,"availableBalance":-3.96,"currency":"EUR","date":"2025-04-11"}
+```
+
 ## Come Eseguire
 
 ### Prerequisiti

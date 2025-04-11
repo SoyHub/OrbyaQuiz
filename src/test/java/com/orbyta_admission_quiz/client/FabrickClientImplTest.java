@@ -189,7 +189,7 @@ class FabrickClientImplTest {
     void createMoneyTransfer_success() {
         Long accountId = 55555L;
         Map<String, Object> pathVars = Map.of("accountId", accountId);
-        MoneyTransferRequest requestBody = new MoneyTransferRequest();
+        MoneyTransferRequest requestBody =  MoneyTransferRequest.builder().build();
 
         MoneyTransferResponse mockPayload = new MoneyTransferResponse();
         mockPayload.setMoneyTransferId("MT-123");
@@ -218,7 +218,7 @@ class FabrickClientImplTest {
     void createMoneyTransfer_shouldThrowFabrickApiException_whenApiReturnsError() {
         Long accountId = 55555L;
         Map<String, Object> pathVars = Map.of("accountId", accountId);
-        MoneyTransferRequest requestBody = new MoneyTransferRequest();
+        MoneyTransferRequest requestBody = MoneyTransferRequest.builder().build();
         HttpStatus errorStatus = HttpStatus.BAD_REQUEST;
         String errorMessage = "Validation Error";
 

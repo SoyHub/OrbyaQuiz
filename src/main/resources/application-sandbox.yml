@@ -15,11 +15,6 @@ spring:
 logging:
   level:
     com.orbyta_admission_quiz: DEBUG
-    org:
-      springframework:
-        web:
-          client:
-            RestTemplate: DEBUG
 fabrick:
   api:
     baseUrl: https://sandbox.platfr.io

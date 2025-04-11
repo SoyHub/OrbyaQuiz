@@ -100,10 +100,8 @@ class PaymentsControllerTest {
                                 .accountCode("IBAN123")
                                 .build())
                         .build())
-                .feeType("STANDARD")
                 .amount(new BigDecimal("100.00"))
                 .currency("EUR")
-                .description("Invalid Payment")
                 .executionDate(LocalDate.now().plusDays(1))
                 .build();
 
