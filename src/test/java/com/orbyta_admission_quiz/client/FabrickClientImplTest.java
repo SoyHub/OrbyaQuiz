@@ -56,7 +56,7 @@ class FabrickClientImplTest {
 
     @Test
     @DisplayName("getAccountBalance - Success")
-    void getAccountBalance_success() {
+    void getAccountBalance_success() throws FabrickApiException {
         Long accountId = 12345L;
         Map<String, Object> pathVars = Map.of("accountId", accountId);
 
@@ -86,7 +86,7 @@ class FabrickClientImplTest {
 
     @Test
     @DisplayName("getAccountTransactions - Success")
-    void getAccountTransactions_success() {
+    void getAccountTransactions_success() throws FabrickApiException {
         Long accountId = 67890L;
         LocalDate fromDate = LocalDate.of(2024, 1, 1);
         LocalDate toDate = LocalDate.of(2024, 1, 31);
@@ -186,7 +186,7 @@ class FabrickClientImplTest {
 
     @Test
     @DisplayName("createMoneyTransfer - Success")
-    void createMoneyTransfer_success() {
+    void createMoneyTransfer_success() throws FabrickApiException {
         Long accountId = 55555L;
         Map<String, Object> pathVars = Map.of("accountId", accountId);
         MoneyTransferRequest requestBody =  MoneyTransferRequest.builder().build();

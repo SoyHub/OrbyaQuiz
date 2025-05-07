@@ -4,6 +4,7 @@ import com.orbyta_admission_quiz.client.fabrick.FabrickClient;
 import com.orbyta_admission_quiz.dto.account.response.AccountBalanceResponse;
 import com.orbyta_admission_quiz.dto.account.response.AccountTransactionsResponse;
 import com.orbyta_admission_quiz.dto.account.response.Transaction;
+import com.orbyta_admission_quiz.exception.FabrickApiException;
 import com.orbyta_admission_quiz.repository.TransactionRepository;
 import com.orbyta_admission_quiz.service.AccountService;
 import lombok.AllArgsConstructor;
@@ -23,12 +24,12 @@ public class AccountServiceImpl implements AccountService {
     private final TransactionRepository transactionRepository;
 
     @Override
-    public AccountBalanceResponse getAccountBalance(Long accountId) {
+    public AccountBalanceResponse getAccountBalance(Long accountId) throws FabrickApiException {
         return fabrickClient.getAccountBalance(accountId);
     }
 
     @Override
-    public List<Transaction> getAccountTransactions(Long accountId, LocalDate fromDate, LocalDate toDate) {
+    public List<Transaction> getAccountTransactions(Long accountId, LocalDate fromDate, LocalDate toDate) throws FabrickApiException {
         /* If needed, uncomment the following lines to fetch saved transactions from the db
             Optional<List<Transaction>> storedTransactions = getStoredTransactions(accountId, fromDate, toDate);
             if (storedTransactions.isPresent()) {

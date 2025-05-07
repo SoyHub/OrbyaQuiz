@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import com.orbyta_admission_quiz.client.fabrick.FabrickClient;
 import com.orbyta_admission_quiz.dto.payments.request.MoneyTransferRequest;
 import com.orbyta_admission_quiz.dto.payments.response.MoneyTransferResponse;
+import com.orbyta_admission_quiz.exception.FabrickApiException;
 import com.orbyta_admission_quiz.service.impl.PaymentsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ class PaymentsServiceImplTest {
     }
 
     @Test
-    void createMoneyTransfer_Success() {
+    void createMoneyTransfer_Success() throws FabrickApiException {
         Long accountId = 12345678L;
         MoneyTransferRequest request = MoneyTransferRequest.builder()
                 .creditor(MoneyTransferRequest.Creditor.builder()
@@ -42,7 +43,7 @@ class PaymentsServiceImplTest {
     }
 
     @Test
-    void createMoneyTransfer_Failure() {
+    void createMoneyTransfer_Failure() throws FabrickApiException {
         Long accountId = 12345678L;
         MoneyTransferRequest request = MoneyTransferRequest.builder()
                 .creditor(MoneyTransferRequest.Creditor.builder()

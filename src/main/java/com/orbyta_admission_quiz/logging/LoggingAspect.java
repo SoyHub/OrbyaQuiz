@@ -1,7 +1,5 @@
 package com.orbyta_admission_quiz.logging;
 
-// Import custom exception
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -9,8 +7,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-// Import parent class
-
 
 @Aspect
 @Component
@@ -20,7 +16,6 @@ public class LoggingAspect {
 
     private final LoggingUtils loggingUtils;
 
-    // --- Pointcuts remain the same ---
     @Pointcut("within(@org.springframework.stereotype.Service *)" +
             " || within(@org.springframework.stereotype.Repository *)" +
             " || within(@org.springframework.web.bind.annotation.RestController *)" +
@@ -70,10 +65,11 @@ public class LoggingAspect {
         } catch (Throwable e) {
             String errorArrows = loggingUtils.generateArrows("<");
             long executionTime = System.currentTimeMillis() - startTime;
-            log.error("{} {}.{}() ORIGINAL Exception Type: {}, Message: {} time={}ms with argsJson={}",
-                    errorArrows, className, methodName, e.getClass().getSimpleName(), e.getMessage(), executionTime, argsJson, e);
+            if (log.isDebugEnabled()) {
+                log.debug("{} {}.{}() Exception Type: {}, Message: {} time={}ms with argsJson={}",
+                        errorArrows, className, methodName, e.getClass().getSimpleName(), e.getMessage(), executionTime, argsJson);
+            }
             throw e;
-
         } finally {
             int finalDepth = loggingUtils.decrementDepth();
             if (finalDepth == 0) {

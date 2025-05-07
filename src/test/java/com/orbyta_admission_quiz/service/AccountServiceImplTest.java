@@ -7,6 +7,7 @@ import com.orbyta_admission_quiz.client.fabrick.FabrickClient;
 import com.orbyta_admission_quiz.dto.account.response.AccountBalanceResponse;
 import com.orbyta_admission_quiz.dto.account.response.AccountTransactionsResponse;
 import com.orbyta_admission_quiz.dto.account.response.Transaction;
+import com.orbyta_admission_quiz.exception.FabrickApiException;
 import com.orbyta_admission_quiz.repository.TransactionRepository;
 import com.orbyta_admission_quiz.service.impl.AccountServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,7 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void getAccountBalance_Success() {
+    void getAccountBalance_Success() throws FabrickApiException {
         Long accountId = 12345678L;
         AccountBalanceResponse balanceResponse = new AccountBalanceResponse(
                 new BigDecimal("1000.00"),
@@ -55,7 +56,7 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void getAccountTransactions_Success() {
+    void getAccountTransactions_Success() throws FabrickApiException {
         Long accountId = 12345678L;
         LocalDate fromDate = LocalDate.of(2023, 1, 1);
         LocalDate toDate = LocalDate.of(2023, 12, 31);

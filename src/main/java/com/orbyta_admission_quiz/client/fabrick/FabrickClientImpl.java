@@ -10,7 +10,6 @@ import com.orbyta_admission_quiz.exception.FabrickApiException;
 import com.orbyta_admission_quiz.util.ApiContext;
 import com.orbyta_admission_quiz.util.Constants;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -34,25 +33,23 @@ public class FabrickClientImpl implements FabrickClient {
     private final RestTemplate restTemplate;
     private final FabrickApiEndpointsConfig endpointsConfig;
 
-    @SneakyThrows
-    private <T> T execute(String url, HttpMethod method, Object body, Map<String, Object> uriVariables, ParameterizedTypeReference<FabrickResponse<T>> typeReference) {
+    private <T> T execute(String url, HttpMethod method, Object body, Map<String, Object> uriVariables, ParameterizedTypeReference<FabrickResponse<T>> typeReference) throws FabrickApiException {
         try {
             ResponseEntity<FabrickResponse<T>> response = restTemplate.exchange(url, method, new HttpEntity<>(body, ApiContext.buildDefaultHeaders()), typeReference, uriVariables);
             return Objects.requireNonNull(response.getBody()).payload();
         } catch (HttpClientErrorException e) {
-            log.error("Fabrick API error: {}", e.getMessage(), e);
             throw new FabrickApiException(e.getResponseBodyAsString(), e.getMessage(), e.getStatusCode().value());
         }
     }
 
     @Override
-    public AccountBalanceResponse getAccountBalance(Long accountId) {
+    public AccountBalanceResponse getAccountBalance(Long accountId) throws FabrickApiException {
         Map<String, Object> pathVars = Map.of(Constants.ACCOUNT_ID_FIELD_KEY, accountId);
         return execute(endpointsConfig.getAccountBalanceEndpoint(), HttpMethod.GET, null, pathVars, new ParameterizedTypeReference<>() {});
     }
 
     @Override
-    public AccountTransactionsResponse getAccountTransactions(Long accountId, LocalDate fromDate, LocalDate toDate) {
+    public AccountTransactionsResponse getAccountTransactions(Long accountId, LocalDate fromDate, LocalDate toDate) throws FabrickApiException {
         Map<String, Object> pathVars = Map.of(Constants.ACCOUNT_ID_FIELD_KEY, accountId);
 
         String url = UriComponentsBuilder
@@ -66,7 +63,7 @@ public class FabrickClientImpl implements FabrickClient {
     }
 
     @Override
-    public MoneyTransferResponse createMoneyTransfer(Long accountId, MoneyTransferRequest request) {
+    public MoneyTransferResponse createMoneyTransfer(Long accountId, MoneyTransferRequest request) throws FabrickApiException {
         Map<String, Object> pathVars = Map.of(Constants.ACCOUNT_ID_FIELD_KEY, accountId);
         return execute(endpointsConfig.getMoneyTransferEndpoint(), HttpMethod.POST, request, pathVars, new ParameterizedTypeReference<>() {});
     }

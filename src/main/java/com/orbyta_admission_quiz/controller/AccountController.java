@@ -3,6 +3,7 @@ package com.orbyta_admission_quiz.controller;
 
 import com.orbyta_admission_quiz.dto.account.response.AccountBalanceResponse;
 import com.orbyta_admission_quiz.dto.account.response.Transaction;
+import com.orbyta_admission_quiz.exception.FabrickApiException;
 import com.orbyta_admission_quiz.service.AccountService;
 import com.orbyta_admission_quiz.util.Constants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +35,7 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Invalid account ID supplied", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public AccountBalanceResponse getAccountBalance(@PathVariable Long accountId) {
+    public AccountBalanceResponse getAccountBalance(@PathVariable Long accountId) throws FabrickApiException {
         return accountService.getAccountBalance(accountId);
     }
 
@@ -45,7 +46,7 @@ public class AccountController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping("/{accountId}/transactions")
-    public List<Transaction> getAccountTransactions(@PathVariable Long accountId, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fromAccountingDate, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate toAccountingDate) {
+    public List<Transaction> getAccountTransactions(@PathVariable Long accountId, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fromAccountingDate, @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate toAccountingDate) throws FabrickApiException {
         return accountService.getAccountTransactions(accountId, fromAccountingDate, toAccountingDate);
     }
 }

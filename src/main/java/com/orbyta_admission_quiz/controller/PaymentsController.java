@@ -3,6 +3,7 @@ package com.orbyta_admission_quiz.controller;
 
 import com.orbyta_admission_quiz.dto.payments.request.MoneyTransferRequest;
 import com.orbyta_admission_quiz.dto.payments.response.MoneyTransferResponse;
+import com.orbyta_admission_quiz.exception.FabrickApiException;
 import com.orbyta_admission_quiz.service.PaymentsService;
 import com.orbyta_admission_quiz.util.Constants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +35,7 @@ public class PaymentsController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @PostMapping("/{accountId}/payments/money-transfers")
-    public ResponseEntity<Object> createMoneyTransfer(@PathVariable Long accountId, @Valid @RequestBody MoneyTransferRequest request) {
+    public ResponseEntity<Object> createMoneyTransfer(@PathVariable Long accountId, @Valid @RequestBody MoneyTransferRequest request) throws FabrickApiException {
         MoneyTransferResponse response = paymentsService.createMoneyTransfer(accountId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
