@@ -11,4 +11,4 @@ logging:
       springframework:
         web:
           client:
-            RestTemplate: OFF
+            RestTemplate: OFF #handle RestTemplate logging manually in AOP
