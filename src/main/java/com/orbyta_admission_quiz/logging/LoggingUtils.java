@@ -4,13 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Component
 @Slf4j
@@ -26,13 +27,8 @@ public class LoggingUtils {
 
     public int decrementDepth() {
         int currentDepth = callDepth.get();
-        if (currentDepth > 0) {
-            callDepth.set(currentDepth - 1);
-            return currentDepth - 1;
-        } else {
-            callDepth.set(0);
-            return 0;
-        }
+        callDepth.set(Math.max(0, currentDepth - 1));
+        return callDepth.get();
     }
 
     public int getCurrentDepth() {
@@ -43,70 +39,85 @@ public class LoggingUtils {
         callDepth.remove();
     }
 
+    public void cleanupDepth() {
+        if (decrementDepth() == 0) removeDepth();
+    }
+
     public String generateArrows(String arrowChar) {
-        int depth = getCurrentDepth();
-        int displayDepth = Math.max(1, depth);
-        return IntStream.range(0, displayDepth)
-                .mapToObj(i -> arrowChar)
-                .collect(Collectors.joining());
+        return arrowChar.repeat(Math.max(1, getCurrentDepth()));
     }
 
     public String toJson(Object obj) {
-        if (obj == null) {
-            return "null";
-        }
+        if (obj == null) return "null";
 
         if (obj.getClass().isArray()) {
-            Object[] array = (Object[]) obj;
-            return Arrays.stream(array)
-                    .map(this::serializeArrayElement)
+            return Arrays.stream((Object[]) obj)
+                    .map(this::serializeElement)
                     .collect(Collectors.joining(", ", "[", "]"));
-        } else {
-            return serializeObject(obj);
         }
+
+        return serializeElement(obj);
     }
 
-    private String serializeArrayElement(Object element) {
-        if (element == null) {
-            return "null";
-        }
-        if (element instanceof HttpMethod) {
-            return "\"" + element + "\"";
-        }
-        if (element instanceof ParameterizedTypeReference) {
-            return "\"" + element + "\"";
-        }
-        return serializeObject(element);
-    }
+    private String serializeElement(Object element) {
+        if (element == null) return "null";
 
-
-    private String serializeObject(Object obj) {
-        if (obj == null) {
-            return "null";
-        }
-
-        if (obj instanceof ParameterizedTypeReference) {
-            return "\"" + obj.toString() + "\"";
-        }
-        if (obj instanceof HttpMethod) {
-            return "\"" + obj.toString() + "\"";
-        }
+        if (element instanceof HttpMethod || element instanceof ParameterizedTypeReference) return "\"" + element + "\"";
 
         try {
-            return objectMapper.writeValueAsString(obj);
+            return objectMapper.writeValueAsString(element);
         } catch (JsonProcessingException e) {
-            log.warn("Failed to serialize object {} to JSON: {}. Falling back to toString().",
-                    obj.getClass().getSimpleName(), e.getMessage());
-            return "\"" + escapeStringForJson(obj.toString()) + "\"";
+            log.warn("Failed to serialize {} to JSON: {}. Using toString().",
+                    element.getClass().getSimpleName(), e.getMessage());
+            return "\"" + escapeStringForJson(element.toString()) + "\"";
         } catch (Exception e) {
-            log.error("Unexpected error during JSON serialization of {}: {}",
-                    obj.getClass().getSimpleName(), e.getMessage(), e);
+            log.error("Unexpected error serializing {}: {}",
+                    element.getClass().getSimpleName(), e.getMessage(), e);
             return "\"[Serialization Error]\"";
         }
     }
 
     private String escapeStringForJson(String input) {
-        if (input == null) return "";
-        return input.replace("\"", "\\\"");
+        return Optional.ofNullable(input).map(s -> s.replace("\"", "\\\"")).orElse("");
     }
+
+    public void logMethodEntry(ProceedingJoinPoint joinPoint, String className, String methodName, String entryArrows) {
+        if (!log.isInfoEnabled()) return;
+
+        try {
+            log.info("{} {}.{}() argsJson={}", entryArrows, className, methodName, toJson(joinPoint.getArgs()));
+        } catch (Exception e) {
+            log.warn("{} {}.{}() - Failed to serialize args: {}", entryArrows, className, methodName, e.getMessage());
+            log.info("{} {}.{}() args=[Serialization Failed]", entryArrows, className, methodName);
+        }
+    }
+
+    public void logMethodExit(Object result, String className, String methodName, long executionTime, String exitArrows) {
+        if (!log.isInfoEnabled()) return;
+
+        try {
+            log.info("{} {}.{}() time={}ms resultJson={}",
+                    exitArrows, className, methodName, executionTime, toJson(result));
+        } catch (Exception e) {
+            log.warn("{} {}.{}() time={}ms - Failed to serialize result: {}",
+                    exitArrows, className, methodName, executionTime, e.getMessage());
+            log.info("{} {}.{}() time={}ms result=[Serialization Failed]",
+                    exitArrows, className, methodName, executionTime);
+        }
+    }
+
+    public void logMethodException(Throwable e, String className, String methodName, long executionTime, String errorArrows, Object[] args) {
+        if (!log.isDebugEnabled()) return;
+
+        try {
+            log.debug("{} {}.{}() Exception Type: {}, Message: {} time={}ms with argsJson={}",
+                    errorArrows, className, methodName, e.getClass().getSimpleName(),
+                    e.getMessage(), executionTime, toJson(args));
+        } catch (Exception logEx) {
+            log.debug("{} {}.{}() Exception Type: {}, Message: {} time={}ms with args=[Serialization Failed]",
+                    errorArrows, className, methodName, e.getClass().getSimpleName(),
+                    e.getMessage(), executionTime);
+        }
+    }
+
 }

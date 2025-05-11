@@ -10,8 +10,6 @@ import java.time.LocalDate;
 
 public interface FabrickClient {
     AccountBalanceResponse getAccountBalance(Long accountId) throws FabrickApiException;
-
     AccountTransactionsResponse getAccountTransactions(Long accountId, LocalDate fromDate, LocalDate toDate) throws FabrickApiException;
-
     MoneyTransferResponse createMoneyTransfer(Long accountId, MoneyTransferRequest request) throws FabrickApiException;
 }

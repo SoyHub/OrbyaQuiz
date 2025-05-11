@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FabrickApiException.class)
     public ResponseEntity<FabrickApiErrorResponse> handleFabrickApiException(FabrickApiException ex) {
-        log.error("Fabrick API error: {}", ex.getMessage(), ex);
+        log.error("Fabrick API error:", ex);
 
         FabrickApiErrorResponse.FabrickApiErrorResponseBuilder responseBuilder = FabrickApiErrorResponse.builder()
                 .timestamp(LocalDateTime.now())

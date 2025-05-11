@@ -17,6 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,7 +38,7 @@ public class FabrickClientImpl implements FabrickClient {
         try {
             ResponseEntity<FabrickResponse<T>> response = restTemplate.exchange(url, method, new HttpEntity<>(body, ApiContext.buildDefaultHeaders()), typeReference, uriVariables);
             return Objects.requireNonNull(response.getBody()).payload();
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             throw new FabrickApiException(e.getResponseBodyAsString(), e.getMessage(), e.getStatusCode().value());
         }
     }

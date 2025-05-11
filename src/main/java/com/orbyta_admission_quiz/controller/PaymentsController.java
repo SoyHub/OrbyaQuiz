@@ -33,7 +33,7 @@ public class PaymentsController {
             @ApiResponse(responseCode = "201", description = "Money transfer created successfully", content = @Content(schema = @Schema(implementation = MoneyTransferResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
-    })
+    }) // To show how to use manual swagger annotations
     @PostMapping("/{accountId}/payments/money-transfers")
     public ResponseEntity<Object> createMoneyTransfer(@PathVariable Long accountId, @Valid @RequestBody MoneyTransferRequest request) throws FabrickApiException {
         MoneyTransferResponse response = paymentsService.createMoneyTransfer(accountId, request);
