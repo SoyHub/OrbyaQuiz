@@ -34,69 +34,41 @@ class LoggingAspectTest {
         when(signature.getDeclaringType()).thenReturn(Object.class);
         when(signature.getName()).thenReturn("testMethod");
         when(loggingUtils.generateArrows(anyString())).thenReturn(">>>");
-        when(loggingUtils.toJson(any())).thenReturn("{}");
     }
 
     @Test
     void logAroundWithDepth_shouldLogMethodEntryAndExit() throws Throwable {
         Object expectedResult = "test result";
         when(joinPoint.proceed()).thenReturn(expectedResult);
-        when(joinPoint.getArgs()).thenReturn(new Object[]{"testArg"});
         Object result = loggingAspect.logAroundWithDepth(joinPoint);
         assertEquals(expectedResult, result);
         verify(loggingUtils).incrementDepth();
-        verify(loggingUtils).decrementDepth();
-        verify(loggingUtils, times(2)).toJson(any());
-        verify(loggingUtils).generateArrows(">");
-        verify(loggingUtils).generateArrows("<");
+        verify(loggingUtils).cleanupDepth();
+        verify(loggingUtils).logMethodEntry(joinPoint, "Object", "testMethod", ">>>");
+        verify(loggingUtils).logMethodExit(eq(expectedResult), eq("Object"), eq("testMethod"), anyLong(), eq(">>>"));
     }
 
     @Test
-    void logAroundWithDepth_shouldLogAndRethrowIllegalArgumentException() throws Throwable {
-        IllegalArgumentException expectedException = new IllegalArgumentException("Invalid argument");
-        when(joinPoint.proceed()).thenThrow(expectedException);
-        when(joinPoint.getArgs()).thenReturn(new Object[]{"testArg"});
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            loggingAspect.logAroundWithDepth(joinPoint);
-        });
-        assertEquals(expectedException, exception);
-        verify(loggingUtils).incrementDepth();
-        verify(loggingUtils).decrementDepth();
-        verify(loggingUtils, times(1)).toJson(any());
-        verify(loggingUtils).generateArrows(">");
-        verify(loggingUtils).generateArrows("<");
-    }
-
-    @Test
-    void logAroundWithDepth_shouldLogAndRethrowGenericException() throws Throwable {
+    void logAroundWithDepth_shouldLogAndRethrowException() throws Throwable {
         RuntimeException expectedException = new RuntimeException("Something went wrong");
         when(joinPoint.proceed()).thenThrow(expectedException);
-        when(joinPoint.getArgs()).thenReturn(new Object[]{"testArg"});
         Exception exception = assertThrows(RuntimeException.class, () -> {
             loggingAspect.logAroundWithDepth(joinPoint);
         });
         assertEquals(expectedException, exception);
         verify(loggingUtils).incrementDepth();
-        verify(loggingUtils).decrementDepth();
-        verify(loggingUtils, times(1)).toJson(any());
-        verify(loggingUtils).generateArrows(">");
-        verify(loggingUtils).generateArrows("<");
+        verify(loggingUtils).cleanupDepth();
     }
 
     @Test
-    void logAroundWithDepth_shouldRemoveDepthWhenFinalDepthIsZero() throws Throwable {
-        when(joinPoint.proceed()).thenReturn("result");
-        when(loggingUtils.decrementDepth()).thenReturn(0);
-        loggingAspect.logAroundWithDepth(joinPoint);
-        verify(loggingUtils).removeDepth();
+    void logAroundWithDepth_shouldHandleExecutionTimeCorrectly() throws Throwable {
+        Object expectedResult = "test result";
+        when(joinPoint.proceed()).thenReturn(expectedResult);
+        Object result = loggingAspect.logAroundWithDepth(joinPoint);
+        assertEquals(expectedResult, result);
+        verify(loggingUtils).incrementDepth();
+        verify(loggingUtils).cleanupDepth();
+        verify(loggingUtils).logMethodEntry(any(), anyString(), anyString(), anyString());
+        verify(loggingUtils).logMethodExit(any(), anyString(), anyString(), anyLong(), anyString());
     }
-
-    @Test
-    void logAroundWithDepth_shouldNotRemoveDepthWhenFinalDepthIsNotZero() throws Throwable {
-        when(joinPoint.proceed()).thenReturn("result");
-        when(loggingUtils.decrementDepth()).thenReturn(1);
-        loggingAspect.logAroundWithDepth(joinPoint);
-        verify(loggingUtils, never()).removeDepth();
-    }
-
 }
